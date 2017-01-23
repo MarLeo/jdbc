@@ -20,6 +20,7 @@ public class CreerDepartment {
         String password = argv[1];
         //String fichierProp = argv[2];
 
+
         try {
             // obtention de la connexion
             _cx = ConfigConnection.getConnection(/*fichierProp,*/username, password);
