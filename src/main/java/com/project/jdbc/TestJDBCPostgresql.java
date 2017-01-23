@@ -34,9 +34,9 @@ public class TestJDBCPostgresql {
             //Code using the ConfigConnection class
             String username = argv[0];
             String password = argv[1];
-            String fichierProp = argv[2];
-            System.out.println("Username=" + username + " Passwd=" + password + " fichierProp=" + fichierProp + "\n");
-            db = ConfigConnection.getConnection(fichierProp, username, password);
+            //String fichierProp = argv[2];
+            System.out.println("Username = " + username + " Passwd = " + password + /*" fichierProp = " + fichierProp +*/ "\n");
+            db = ConfigConnection.getConnection(/*fichierProp,*/ username, password);
 
 
 		/* AUTOCOMMIT: If set to true, PostgreSQL will automatically do
@@ -235,7 +235,7 @@ public class TestJDBCPostgresql {
     public static void main(String args[]) {
         System.out.println("nb arg=" + args.length);
 
-        if (args.length != 3) correctUsage();
+        if (args.length != 2) correctUsage();
         try {
             new TestJDBCPostgresql(args);
         } catch (Exception ex) {

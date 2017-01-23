@@ -5,7 +5,9 @@ package com.project.jdbc.config;
  */
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -65,7 +67,7 @@ public class ConfigConnection {
      * Le nom et le mot de passe de l'utilisateur sont passés
      * en paramètre de la méthode.
      *
-     * @param nomFichierProp nom du fichier de propriétés. Si le nom
+     //* @param nomFichierProp nom du fichier de propriétés. Si le nom
      *                       commence par "/", l'emplacement désigne un endroit relatif
      *                       au classpath, sinon il désigne un endroit relatif au
      *                       répertoire qui contient le fichier ConfigConnection.class.
@@ -73,16 +75,19 @@ public class ConfigConnection {
      * @param mdp            mot de passe de l'utilisateur.
      * @return une connexion à la base.
      */
-    public static Connection getConnection(String nomFichierProp,
+    public static Connection getConnection(/*String nomFichierProp,*/
                                            String utilisateur,
                                            String mdp)
             throws IOException, ClassNotFoundException, SQLException {
         Properties props = new Properties();
-        URL urlFichierProp = ConfigConnection.class.getResource(nomFichierProp);
-        BufferedInputStream bis = null;
+        String nomFichierProp = "C:\\Users\\marti\\Documents\\IdeaProjects\\jdbc\\src\\main\\resources\\config.properties";
+        //URL urlFichierProp = ConfigConnection.class.getResource(/*nomFichierProp*/"config.properties");
+        //BufferedInputStream bis = null;
+        InputStream in = null;
         try {
-            bis = new BufferedInputStream(urlFichierProp.openStream());
-            props.load(bis);
+            //bis = new BufferedInputStream(urlFichierProp);
+            in = new FileInputStream(nomFichierProp);
+            props.load(in);
             String driver = props.getProperty("driver");
             String url = props.getProperty("url");
 
@@ -90,8 +95,8 @@ public class ConfigConnection {
 
             return DriverManager.getConnection(url, utilisateur, mdp);
         } finally {
-            if (bis != null) {
-                bis.close();
+            if (in != null) {
+                in.close();
             }
         }
     }
