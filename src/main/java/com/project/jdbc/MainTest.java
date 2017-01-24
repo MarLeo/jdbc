@@ -42,22 +42,20 @@ public class MainTest {
 
             DAO<Formation> formationDAO = new FormationDao(); // instantiation du dao formation
             // Insertion d'une nouvelle formation
-            Formation f = new Formation("Medecine");
-            // System.out.println("Executing this command: " + sqlText + "\n");
-            formationDAO.create(_cx, f);
-            System.out.println("Formation " + f.toString() + " created");
+            Formation created_formation = formationDAO.create(_cx, new Formation("Master 2 ID"));
+            System.out.println("Formation " + created_formation.getNom() + " with id " + created_formation.getFid() + " created ");
 
             // find a new formation
-            Formation formation = formationDAO.findById(_cx, 7);
-            System.out.println("The corresponding formation is : " + formation.toString());
+            Formation formation_finded = formationDAO.findById(_cx, created_formation.getFid());
+            System.out.println("The formation with id " + created_formation.getFid() + " is " + formation_finded.getNom());
 
-            // updating a formation
-            formation.setNom("Master 2 SITN");
-            Formation formation_update = formationDAO.update(_cx, formation);
-            System.out.println("The updating formation is : " + formation_update.toString());
+             //updating a formation
+            formation_finded.setNom("Master 2 SITN");
+            Formation formation_update = formationDAO.update(_cx, formation_finded);
+            System.out.println("The name of formation " + formation_finded.getNom() + " has been renamed to " + formation_update.getNom());
 
             // deleting a formation
-            formationDAO.delete(_cx, formation_update);
+            //formationDAO.delete(_cx, formation_update);
 
 
             // finding all data
