@@ -96,7 +96,7 @@ public class Formation {
             _builtFromDB = true;
 
             // Pour récuperer la clé générée sous PostgreSQL
-            ResultSet rset = s.executeQuery("SELECT last_value FROM formation_FID_seq");
+            ResultSet rset = s.executeQuery("SELECT last_value FROM formation_fid_seq");
             if (rset.next()) {
                 //Column numbered from 1 (not from zero)
                 fid = rset.getInt(1);

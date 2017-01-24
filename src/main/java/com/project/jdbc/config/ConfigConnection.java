@@ -23,6 +23,9 @@ import java.util.Properties;
  */
 public class ConfigConnection {
 
+    //private static final String USER = "postgres";
+    //private static final String MDP = "hello";
+
     private ConfigConnection() {
     }
 
@@ -90,6 +93,8 @@ public class ConfigConnection {
             props.load(in);
             String driver = props.getProperty("driver");
             String url = props.getProperty("url");
+            //String utilisateur = props.getProperty("utilisateur");
+            //String mdp = props.getProperty("mdp");
 
             Class.forName(driver);
 
@@ -100,4 +105,5 @@ public class ConfigConnection {
             }
         }
     }
+
 } // Config Connexion
