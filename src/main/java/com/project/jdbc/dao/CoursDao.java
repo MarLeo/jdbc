@@ -16,27 +16,6 @@ import java.util.List;
 public class CoursDao extends DAO<Cours> {
 
 
-    //======================================> Private Methods <========================================
-    private static String find_query(final int fid) {
-        return null;
-    }
-
-    private static String create_query(final Cours c) {
-        return null;
-    }
-
-    private static String update_query(Formation formation) {
-        return null;
-    }
-
-    private static String delete_query(Formation formation) {
-        return null;
-    }
-
-    private static String find_all_query() {
-        return "SELECT * from Cours";
-    }
-
     public List<Cours> findAll(Connection connection) throws SQLException {
 
         return null;
@@ -57,6 +36,7 @@ public class CoursDao extends DAO<Cours> {
             resultSet.first();
             cours = new Cours(cid, new FormationDao().findById(connection, resultSet.getInt("fid")), resultSet.getString("nom"), seances);
         }
+        connection.commit();
         return cours;
     }
 
@@ -96,7 +76,7 @@ public class CoursDao extends DAO<Cours> {
                 preparedStatement1.executeUpdate();
             }
         }
-
+        connection.commit();
         return cours;
     }
 
@@ -135,7 +115,7 @@ public class CoursDao extends DAO<Cours> {
                 seanceDao.update(connection, seance);
             }
         }
-
+        connection.commit();
         return cours;
     }
 
@@ -147,9 +127,33 @@ public class CoursDao extends DAO<Cours> {
         // delete from Cours table
         connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
                 .executeUpdate("DELETE Cours Seance WHERE cid = " + cours.getCid());
-
+        connection.commit();
         return findById(connection, cours.getCid()) == null;
     }
+
+
+    //======================================> Private Methods <========================================
+    private static String find_query(final int fid) {
+        return null;
+    }
+
+    private static String create_query(final Cours c) {
+        return null;
+    }
+
+    private static String update_query(Formation formation) {
+        return null;
+    }
+
+    private static String delete_query(Formation formation) {
+        return null;
+    }
+
+    private static String find_all_query() {
+        return "SELECT * from Cours";
+    }
+
+
 
 
 }

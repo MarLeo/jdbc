@@ -13,11 +13,9 @@ public class FormationDao extends DAO<Formation> {
 
     @Override
     public List<Formation> findAll(final Connection connection) throws SQLException {
-        Statement statement = null;
-        ResultSet resultSet = null;
         List<Formation> formationList = new LinkedList<Formation>();
-        statement = connection.createStatement();
-        resultSet = statement.executeQuery(find_all_query());
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(find_all_query());
         while (resultSet.next()) {
             Formation f = new Formation();
             f.setFid(resultSet.getInt("fid"));

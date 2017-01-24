@@ -3,7 +3,9 @@ package com.project.jdbc;
 import com.project.jdbc.config.ConfigConnection;
 import com.project.jdbc.dao.DAO;
 import com.project.jdbc.dao.FormationDao;
+import com.project.jdbc.metier.Cours;
 import com.project.jdbc.metier.Formation;
+import com.project.jdbc.metier.Salle;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -61,6 +63,29 @@ public class MainTest {
             // finding all data
             List<Formation> formationList = formationDAO.findAll(_cx);
             System.out.println("Formations in the DB are : " + formationList.toString());
+
+            // Create  3 rooms
+            Salle s1 = new Salle("A"); // =====> salle A
+            Salle s2 = new Salle("B"); // =====> salle B
+            Salle s3 = new Salle("C"); // ======> salle C
+
+            // Create  2 Cours
+            Cours c1 = new Cours("Finance de marchés");
+            c1.setFormation(created_formation);
+            Cours c2 = new Cours();
+
+            // Create
+
+
+
+
+
+
+
+
+
+
+
 
 
         } catch (SQLException ex) {

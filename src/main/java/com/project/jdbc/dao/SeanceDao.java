@@ -10,6 +10,7 @@ import java.util.List;
  * Created by marti on 24/01/2017.
  */
 public class SeanceDao extends DAO<Seance> {
+
     public List<Seance> findAll(Connection connection) throws SQLException {
         return null;
     }

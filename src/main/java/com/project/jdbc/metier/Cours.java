@@ -15,6 +15,10 @@ public class Cours {
     public Cours() {
     }
 
+    public Cours(final String nom) {
+        this.nom = nom;
+    }
+
     public Cours(int cid, Formation f, String nom, final List<Seance> seances) {
         this.cid = cid;
         this.f = f;

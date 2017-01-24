@@ -10,6 +10,12 @@ public class Seance {
     private Formation fid;
     private Salle salle;
 
+    public Seance(int sid, Cours cid, Formation fid, Salle salle) {
+        this.sid = sid;
+        this.cid = cid;
+        this.fid = fid;
+        this.salle = salle;
+    }
 
     public int getSid() {
         return sid;
@@ -41,5 +47,15 @@ public class Seance {
 
     public void setSalle(Salle salle) {
         this.salle = salle;
+    }
+
+    @Override
+    public String toString() {
+        return "Seance{" +
+                "sid=" + sid +
+                ", cid=" + cid +
+                ", fid=" + fid +
+                ", salle=" + salle +
+                '}';
     }
 }
