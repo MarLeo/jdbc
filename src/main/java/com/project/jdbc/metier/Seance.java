@@ -6,14 +6,19 @@ package com.project.jdbc.metier;
 public class Seance {
 
     private int sid;
-    private Cours cid;
-    private Formation fid;
+    private Cours cours;
+    private Formation formation;
     private Salle salle;
 
-    public Seance(int sid, Cours cid, Formation fid, Salle salle) {
-        this.sid = sid;
-        this.cid = cid;
-        this.fid = fid;
+    public Seance() {}
+
+    public Seance(Salle salle) {
+        this.salle = salle;
+    }
+
+    public Seance(Cours cours, Formation formation, Salle salle) {
+        this.cours = cours;
+        this.formation = formation;
         this.salle = salle;
     }
 
@@ -25,20 +30,20 @@ public class Seance {
         this.sid = sid;
     }
 
-    public Formation getFid() {
-        return fid;
+    public Formation getFormation() {
+        return formation;
     }
 
-    public void setFid(Formation fid) {
-        this.fid = fid;
+    public void setFormation(Formation formation) {
+        this.formation = formation;
     }
 
-    public Cours getCid() {
-        return cid;
+    public Cours getCours() {
+        return cours;
     }
 
-    public void setCid(Cours cid) {
-        this.cid = cid;
+    public void setCid(Cours cours) {
+        this.cours = cours;
     }
 
     public Salle getSalle() {
@@ -53,8 +58,8 @@ public class Seance {
     public String toString() {
         return "Seance{" +
                 "sid=" + sid +
-                ", cid=" + cid +
-                ", fid=" + fid +
+                ", cours=" + cours +
+                ", formation=" + formation +
                 ", salle=" + salle +
                 '}';
     }

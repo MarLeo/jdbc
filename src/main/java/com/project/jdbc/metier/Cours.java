@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class Cours {
 
+    //private static AtomicInteger counter = new AtomicInteger(2);
     private int cid;
     private Formation f;
     private String nom;
@@ -15,8 +16,13 @@ public class Cours {
     public Cours() {
     }
 
-    public Cours(final String nom) {
+    public Cours(final int cid) {
+        this.cid = cid;
+    }
+
+    public Cours(final String nom, final Formation formation) {
         this.nom = nom;
+        this.f = formation;
     }
 
     public Cours(int cid, Formation f, String nom, final List<Seance> seances) {
@@ -66,9 +72,9 @@ public class Cours {
         return seances.get(sid);
     }
 
-
     @Override
     public String toString() {
-        return "Cours  Cours_id: " + cid + "formation_id:" + f.getFid() + "nom : " + nom + "seances :" + seances;
+        return " Cours  Cours_id : " + this.cid + " formation_id : " + f.getFid() + " nom : " + nom + " seances : " + seances;
     }
+
 }

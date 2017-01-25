@@ -8,8 +8,8 @@ public class Salle {
     private int numSalle;
     private String batiment;
 
-    public Salle(String batiment) {
-        this.numSalle = -1;
+    public Salle(final int numSalle, final String batiment) {
+        this.numSalle = numSalle;
         this.batiment = batiment;
     }
 
@@ -29,4 +29,11 @@ public class Salle {
         this.batiment = batiment;
     }
 
+    @Override
+    public String toString() {
+        return "Salle{" +
+                "numSalle=" + numSalle +
+                ", batiment='" + batiment + '\'' +
+                '}';
+    }
 }

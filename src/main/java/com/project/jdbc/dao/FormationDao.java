@@ -22,12 +22,10 @@ public class FormationDao extends DAO<Formation> {
             f.setNom(resultSet.getString("nom"));
             formationList.add(f);
         }
-
         return formationList;
     }
 
     public Formation findById(Connection connection, int fid) throws SQLException {
-
         Statement statement = null;
         ResultSet resultSet = null;
         statement = connection.createStatement();
@@ -39,30 +37,10 @@ public class FormationDao extends DAO<Formation> {
             connection.commit();
             return formation;
         }
-
-       /* Formation formation = new Formation();
-
-        ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
-                .executeQuery(find_query(fid));
-        if(resultSet.first()) {
-            formation.setFid(fid);
-            formation = new Formation(resultSet.getString("nom"));
-            return formation;
-        }
-        */
         return null;
     }
 
     public Formation create(Connection connection, Formation f) throws SQLException {
-        //statement = connection.createStatement();
-        //preparedStatement = connection.prepareStatement(create_query(f));
-        //rs = statement.executeQuery(create_query(f));
-        //int statut = preparedStatement.executeUpdate();
-        //rs = preparedStatement.getGeneratedKeys();
-        //if(rs.next()) {
-        //   f.setFid(rs.getInt(1));
-        //}
-
         // récupére le prochain id (SERIAL)
         ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
                 .executeQuery("SELECT nextval('formation_fid_seq') as fid");
@@ -76,11 +54,6 @@ public class FormationDao extends DAO<Formation> {
             f = this.findById(connection, fid);
         }
 
-
-       /*Statement statement = null;
-       statement = connection.prepareStatement(create_query(f));
-       statement.executeUpdate(create_query(f));
-       */
         return f;
     }
 

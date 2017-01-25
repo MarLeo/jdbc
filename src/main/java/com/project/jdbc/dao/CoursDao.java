@@ -21,11 +21,28 @@ public class CoursDao extends DAO<Cours> {
         return null;
     }
 
+    public Cours findById(Connection connection, final int cid, final int fid) throws SQLException {
+        Cours cours = new Cours();
+        ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+                .executeQuery(find_query(cid, fid));
+        if (resultSet.first()) {
+            SeanceDao seanceDao = new SeanceDao();
+            List<Seance> seances = new LinkedList<Seance>();
+            resultSet.beforeFirst();
+            while (resultSet.next() && resultSet.getInt("cid") != 0) {
+                seances.add(seanceDao.findById(connection, resultSet.getInt("cid")));
+            }
+            resultSet.first();
+            cours = new Cours(cid, new FormationDao().findById(connection, resultSet.getInt("fid")), resultSet.getString("nom"), seances);
+        }
+        connection.commit();
+        return cours;
+    }
+
     public Cours findById(Connection connection, int cid) throws SQLException {
         Cours cours = new Cours();
-
         ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                .executeQuery("SELECT * FROM Cours WHERE cid = " + cid);
+                .executeQuery(find_query(cid));
         if (resultSet.first()) {
             SeanceDao seanceDao = new SeanceDao();
             List<Seance> seances = new LinkedList<Seance>();
@@ -41,80 +58,34 @@ public class CoursDao extends DAO<Cours> {
     }
 
     public Cours create(Connection connection, Cours cours) throws SQLException {
-        // Check if formation exists, and create it
-        if (cours.getFormation().getFid() == 0) {
-            FormationDao formationDao = new FormationDao();
-            cours.setFormation(formationDao.create(connection, cours.getFormation()));
-        }
-
-        //ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery("SELECT nextval('cours_cid_seq') as id" );
-
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Cours() VALUES(?, ?, ? )");
-        preparedStatement.setInt(1, cours.getCid());
-        preparedStatement.setInt(2, cours.getFormation().getFid());
-        preparedStatement.setString(3, cours.getNom());
-        preparedStatement.executeUpdate();
-
-        // Création des liens vers les séances
-        // si la séance n'existe pas en base , on la crée
-        for (Seance seance : cours.getSeances()) {
-            if (seance.getSid() == 0) {
-                SeanceDao seanceDao = new SeanceDao();
-                seance = seanceDao.create(connection, seance);
-            }
-            // On récupére la prochaine valeur de la séquence
-            ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
-                    .executeQuery("SELECT NEXTVAL(seance_sid_seq) as sid");
-            if (resultSet.first()) {
-                int sid = resultSet.getInt("sid");
-                PreparedStatement preparedStatement1 = connection.prepareStatement("INSERT INTO Seance() VALUES(?, ?, ?, ?, ?)");
-                preparedStatement1.setInt(1, sid);
-                preparedStatement1.setInt(2, cours.getCid());
-                preparedStatement1.setInt(3, cours.getFormation().getFid());
-                preparedStatement1.setInt(4, seance.getSalle().getNumSalle());
-                preparedStatement1.setString(5, seance.getSalle().getBatiment());
-                preparedStatement1.executeUpdate();
-            }
+        // récupére le prochain le cid max
+        ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
+                .executeQuery(find_max_key());
+        if (resultSet.first()) {
+            int max_id  = resultSet.getInt("cid") + 1;
+            PreparedStatement preparedStatement = connection.prepareStatement(insert_query());
+            preparedStatement.setInt(1, max_id);
+            preparedStatement.setInt(2, cours.getFormation().getFid());
+            preparedStatement.setString(3, cours.getNom());
+            cours.setCid(max_id);
+            preparedStatement.executeUpdate();
         }
         connection.commit();
         return cours;
     }
 
     public Cours update(Connection connection, Cours cours) throws SQLException {
-
-        // on met à jour la liste des séances
-        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Cours SET nom = '" + cours.getNom() + "'" +
-                "WHERE cid = " + cours.getCid());
+        PreparedStatement preparedStatement = connection.prepareStatement(update_query(cours));
         FormationDao formationDao = new FormationDao();
         formationDao.update(connection, cours.getFormation());
+        int size = 0;
+       /* for(Seance seance : cours.getSeances()) {
+            size++;
+            SeanceDao  seanceDao = new SeanceDao();
+            if(seance.getSid() != 0)
+                seanceDao.update(connection, cours.getSeance(size));
+        }*/
         preparedStatement.executeUpdate();
-
-        // Création des liens vers les séances
-        // Si la séance n'existe pas en base, on la crée
-        for (Seance seance : cours.getSeances()) {
-            SeanceDao seanceDao = new SeanceDao();
-
-            // si la séance n'existe pas, on la créé avec sa jointure
-            if (seance.getSid() == 0) {
-                seance = seanceDao.create(connection, seance);
-
-                // on récupére la prochaine valeur de la séance
-                ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
-                        .executeQuery("SELECT NEXTVAL(seance_sid_seq) as sid");
-                if (resultSet.first()) {
-                    int sid = resultSet.getInt("sid");
-                    PreparedStatement preparedStatement1 = connection.prepareStatement("INSERT INTO Seance() VALUES(?, ?, ?, ?, ?)");
-                    preparedStatement1.setInt(1, sid);
-                    preparedStatement1.setInt(2, cours.getCid());
-                    preparedStatement1.setInt(3, cours.getFormation().getFid());
-                    preparedStatement1.setInt(4, seance.getSalle().getNumSalle());
-                    preparedStatement1.setString(5, seance.getSalle().getBatiment());
-                    preparedStatement1.executeUpdate();
-                }
-            } else {
-                seanceDao.update(connection, seance);
-            }
-        }
         connection.commit();
         return cours;
     }
@@ -126,31 +97,41 @@ public class CoursDao extends DAO<Cours> {
 
         // delete from Cours table
         connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
-                .executeUpdate("DELETE Cours Seance WHERE cid = " + cours.getCid());
+                .executeUpdate("DELETE FROM Cours WHERE cid = " + cours.getCid());
         connection.commit();
         return findById(connection, cours.getCid()) == null;
     }
 
 
     //======================================> Private Methods <========================================
-    private static String find_query(final int fid) {
-        return null;
+
+    private static String find_max_key() {
+        return "SELECT cid FROM cours ORDER BY cid DESC LIMIT 1";
     }
 
-    private static String create_query(final Cours c) {
-        return null;
+    private static String find_query(final int cid) {
+        return "SELECT * FROM Cours WHERE cid = " + cid;
     }
 
-    private static String update_query(Formation formation) {
-        return null;
+    private static String find_query(final int cid , final int fid) {
+        return "SELECT * FROM Cours WHERE cid = " + cid + " AND fid = " + fid;
     }
 
-    private static String delete_query(Formation formation) {
-        return null;
+    private static String insert_query() {
+        return "INSERT INTO Cours (cid, fid, nom) VALUES(?, ?, ?)";
+    }
+
+    private static String update_query(final Cours cours) {
+        return "UPDATE Cours SET nom = '" + cours.getNom() + "'" +
+                "WHERE cid = " + cours.getCid() + " AND fid = " + cours.getFormation().getFid();
+    }
+
+    private static String delete_query(final Cours cours) {
+        return "DELETE FROM Seance WHERE cid = " + cours.getCid();
     }
 
     private static String find_all_query() {
-        return "SELECT * from Cours";
+        return "SELECT * from Cours ORDER BY (cid, fid)";
     }
 
 
