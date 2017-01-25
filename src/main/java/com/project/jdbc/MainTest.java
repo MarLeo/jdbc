@@ -86,6 +86,9 @@ public class MainTest {
             Cours created_cours = coursDao.create(connection, c1);
             System.out.println("A new course  with name :" + created_cours.getNom() + " have been created with id " + created_cours.getCid() + " and formation " + created_cours.getFormation());
 
+            // Instantation d'une séance
+            Seance seance = new Seance(created_cours, created_cours.getFormation(), s1);
+
             // Find a collection of cours
             Cours find_cours = coursDao.findById(connection, created_cours.getCid(), created_cours.getFormation().getFid());
             System.out.println("The list of courses finded is : " + find_cours.toString());
@@ -95,8 +98,6 @@ public class MainTest {
             Cours updated_cours = coursDao.update(connection, created_cours);
             System.out.println("The update course is : " + updated_cours.toString());
 
-            // Instantation d'une séance
-            Seance seance = new Seance(updated_cours, updated_cours.getFormation(), s1);
 
             // Insert Seance into DB
             Seance create_seance = seanceDao.create(connection, seance);

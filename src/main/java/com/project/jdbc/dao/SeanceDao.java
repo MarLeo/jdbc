@@ -22,6 +22,22 @@ public class SeanceDao extends DAO<Seance> {
         return null;
     }
 
+    public Seance findById(Connection connection, int fid, int cid) throws  SQLException {
+        Seance seance = new Seance();
+        ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
+                .executeQuery(find_query(cid, fid));
+        if (resultSet.first()) {
+            CoursDao coursDao = new CoursDao();
+            FormationDao formationDao = new FormationDao();
+            Salle salle = new Salle(resultSet.getInt("numsalle"), resultSet.getString("nombatiment"));
+            seance = new Seance(coursDao.findById(connection, cid), formationDao.findById(connection, fid), salle);
+            seance.setSid(resultSet.getInt("sid"));
+            connection.commit();
+            return seance;
+        }
+        return null;
+    }
+
     public Seance findById(Connection connection, int sid, int cid, int fid) throws SQLException {
         Seance seance = new Seance();
         ResultSet resultSet = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)
@@ -70,6 +86,10 @@ public class SeanceDao extends DAO<Seance> {
 
     private static String find_query(final int sid, final int cid, final int fid) {
         return "SELECT * FROM seance WHERE sid = " + sid  + " AND cid = " + cid + " AND fid = " + fid;
+    }
+
+    private static String find_query(final int cid, final int fid) {
+        return "SELECT * FROM seance WHERE  cid = " + cid + " AND fid = " + fid;
     }
 
 
